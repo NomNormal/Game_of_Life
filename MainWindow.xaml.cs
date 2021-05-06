@@ -37,7 +37,7 @@ namespace Game_of_Life
         private Map map;
         public MainWindow()
         {
-            string pathFile = @"D:\!Download\Game_of_Life\Game_of_Life\Game_of_Life\grid.txt";
+            string pathFile = @"..\\..\\..\\grid.txt";
             List<string> inputGrid = new List<string>(File.ReadAllLines(pathFile));
             string header = inputGrid.First();
             inputGrid.RemoveAt(0);
