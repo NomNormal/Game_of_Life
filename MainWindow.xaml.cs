@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using Microsoft.Win32;
 
 /*
 5 10
@@ -40,33 +41,7 @@ namespace Game_of_Life
 
         public MainWindow()
         {
-            string pathFile = @"..\\..\\..\\grid.txt";
-            List<string> inputGrid = new List<string>(File.ReadAllLines(pathFile));
-            string header = inputGrid.First();
-            inputGrid.RemoveAt(0);
-
-            Regex regEx = new Regex(@"([0-9]*) ([0-9]*)");
-            Match matches = regEx.Match(header);
-            string numberRowStr = matches.Groups[1].Value;
-            string numberColumnStr = matches.Groups[2].Value;
-            int numberRow = Int32.Parse(numberRowStr);
-            int numberColumn = Int32.Parse(numberColumnStr);
-
-            this.map = new Map(new List<List<Cell>>());
-
-            for (int y = 0; y < numberRow; y++)
-            {
-                this.map.grid.Insert(y, new List<Cell>());
-                for (int x = 0; x < numberColumn; x++)
-                {
-                    bool isAlive = inputGrid[y][x] == '1';
-                    Cell cell = new Cell(isAlive);
-                    this.map.grid[y].Insert(x, cell);
-                }
-            }
             InitializeComponent();
-            grid.ItemsSource = this.map.grid;
-
             timer.Tick += new EventHandler(EventSpeed);
         }
 
@@ -78,7 +53,48 @@ namespace Game_of_Life
 
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"WIP : { linesTextBox.Text } ; { columnsTextBox.Text }");
+
+        }
+
+        private void browseButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                pathTextBox.Text = openFileDialog.FileName;
+                List<string> inputGrid = new List<string>(File.ReadAllLines(pathTextBox.Text));
+                string header = inputGrid.First();
+                inputGrid.RemoveAt(0);
+
+                Regex regEx = new Regex(@"([0-9]*) ([0-9]*)");
+                Match matches = regEx.Match(header);
+                string numberRowStr = matches.Groups[1].Value;
+                string numberColumnStr = matches.Groups[2].Value;
+                int numberRow = Int32.Parse(numberRowStr);
+                int numberColumn = Int32.Parse(numberColumnStr);
+
+                this.map = new Map(new List<List<Cell>>());
+
+                for (int y = 0; y < numberRow; y++)
+                {
+                    this.map.grid.Insert(y, new List<Cell>());
+                    for (int x = 0; x < numberColumn; x++)
+                    {
+                        bool isAlive = inputGrid[y][x] == '1';
+                        Cell cell = new Cell(isAlive);
+                        this.map.grid[y].Insert(x, cell);
+                    }
+                }
+                
+                grid.ItemsSource = this.map.grid;
+                grid.Items.Refresh();
+            }
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)

@@ -113,6 +113,29 @@
                 BorderThickness="1"
                 Content="Resize"
                 Cursor="Hand" Click="ResizeButton_Click" />
+            <Button
+                x:Name="browseButton"
+                Grid.Column="10"
+                Grid.ColumnSpan="2"
+                Grid.Row="0"
+                Margin="5,10,5,5"
+                Background="#fbe1d5"
+                BorderBrush="#e9692c"
+                BorderThickness="1"
+                Content="Browse.."
+                Cursor="Hand" Click="browseButton_Click"  />
+            <TextBox
+                x:Name="pathTextBox"
+                VerticalContentAlignment="Center"
+                Grid.Column="12"
+                Grid.ColumnSpan="7"
+                Grid.Row="0"
+                Margin="5,10,5,5"
+                Background="#f6c3ab"
+                BorderBrush="#e9692c"
+                BorderThickness="0.7"
+                Text="C:\Users\"
+                Cursor="Hand" />
 
             <Button
                 x:Name="nextButton"
