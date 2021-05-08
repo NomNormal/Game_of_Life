@@ -23,13 +23,13 @@ namespace Game_of_Life.model
 
         }
 
-        public void CellStatusReload(int nbrNeightbours)
+        public void CellStatusReload(int nbrNeighbours)
         {
-            if (nbrNeightbours == 3)
+            if (nbrNeighbours == 3)
             {
                 status = EStatus.ALIVE;
             }
-            if (nbrNeightbours < 2 || nbrNeightbours > 3)
+            if (nbrNeighbours < 2 || nbrNeighbours > 3)
             {
                 status = EStatus.DEAD;
             }

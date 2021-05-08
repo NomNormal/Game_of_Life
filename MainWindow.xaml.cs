@@ -89,8 +89,8 @@ namespace Game_of_Life
         private void FastButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 0.3 seconds
-            map.MapTimeRefresh(true);
-            grid.Items.Refresh();
+            map.MapTimeRefresh(true, grid.Items.Refresh);
+            //grid.Items.Refresh();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)

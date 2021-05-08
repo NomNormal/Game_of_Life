@@ -6,6 +6,7 @@ using System.Windows;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Game_of_Life.model
 {
@@ -17,6 +18,8 @@ namespace Game_of_Life.model
         public Map(List<List<Cell>> grid)
         {
             this.grid = grid;
+
+            //Thread thread = new Thread(new ThreadStart(MapNumberRefresh));
         }
 
         public void MapNumberRefresh(int numberGeneration)
@@ -24,18 +27,24 @@ namespace Game_of_Life.model
             // Reload the generation one or multiple time
             for (int i = 0; i < numberGeneration; i++)
             {
-                OneGeneration();
+                Task taskGeneration = Task.Run(() =>
+                {
+                    OneGeneration();
+                }
+                );
+                Task.WaitAll(taskGeneration);
             }
 
         }
 
-        public void MapTimeRefresh(bool speed)
+        public void MapTimeRefresh(bool isSlow, Action Refresh)
         {
+            /*
             Task timeRefresh = Task.Run(() =>
             {
                 while (true)
                 {
-                    if (speed)
+                    if (isSlow)
                     {
                         OneGeneration();
                         // Wait 0.3 sec 
@@ -46,10 +55,18 @@ namespace Game_of_Life.model
                         OneGeneration();
                         Thread.Sleep(1000);
                     }
-                    //grid.Items.Refresh();
+                    
+                    Dispatcher.Invoke(() =>
+                    {
+                        Refresh();
+                    });
+                    
+                    
+                    
                 }
 
             });
+            */
 
 
         }
@@ -57,6 +74,7 @@ namespace Game_of_Life.model
         public void OneGeneration()
         {
             // Refresh all the map only one time
+
 
             // Copy the original grid
             List<List<Cell>> gridCopy = new List<List<Cell>>();
@@ -79,15 +97,27 @@ namespace Game_of_Life.model
                 }
             }
 
+            List<Task> cellCheck = new();
+
+            
             // Reload cell status depending on the number of neightbours
             for (int y = 0; y < grid.Count(); y++)
             {
                 for (int x = 0; x < grid[y].Count(); x++)
                 {
-                    int nbrNeightbours = GetAliveNeighboursCount(y, x);
-                    gridCopy[y][x].CellStatusReload(nbrNeightbours);
+                    int yy = y;
+                    int xx = x;
+                    Task taskCellCheck = Task.Run(() =>
+                    {
+                        int nbrNeighbours = GetAliveNeighboursCount(yy, xx);
+                        gridCopy[yy][xx].CellStatusReload(nbrNeighbours);
+                    });
+                    cellCheck.Add(taskCellCheck);
                 }
             }
+            
+            Task.WaitAll(cellCheck.ToArray());
+
             grid.Clear();
             grid.AddRange(gridCopy);
 
