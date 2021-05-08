@@ -37,40 +37,6 @@ namespace Game_of_Life.model
 
         }
 
-        public void MapTimeRefresh(bool isSlow, Action Refresh)
-        {
-            /*
-            Task timeRefresh = Task.Run(() =>
-            {
-                while (true)
-                {
-                    if (isSlow)
-                    {
-                        OneGeneration();
-                        // Wait 0.3 sec 
-                        Thread.Sleep(300);
-                    }
-                    else
-                    {
-                        OneGeneration();
-                        Thread.Sleep(1000);
-                    }
-                    
-                    Dispatcher.Invoke(() =>
-                    {
-                        Refresh();
-                    });
-                    
-                    
-                    
-                }
-
-            });
-            */
-
-
-        }
-
         public void OneGeneration()
         {
             // Refresh all the map only one time

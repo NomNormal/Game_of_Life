@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 /*
 5 10
@@ -35,6 +36,8 @@ namespace Game_of_Life
     public partial class MainWindow : Window
     {
         private Map map;
+        static DispatcherTimer timer = new DispatcherTimer();
+
         public MainWindow()
         {
             string pathFile = @"..\\..\\..\\grid.txt";
@@ -63,6 +66,14 @@ namespace Game_of_Life
             }
             InitializeComponent();
             grid.ItemsSource = this.map.grid;
+
+            timer.Tick += new EventHandler(EventSpeed);
+        }
+
+        private void EventSpeed(Object myObject, EventArgs myEventArgs)
+        {
+            map.OneGeneration();
+            grid.Items.Refresh();
         }
 
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
@@ -79,24 +90,22 @@ namespace Game_of_Life
 
         private void SlowButton_Click(object sender, RoutedEventArgs e)
         {
-            //((List<List<Cell>>)grid.Items)[1][1].status = EStatus.ALIVE;
-            grid.Items
-                .OfType<List<Cell>>()
-                .ToList()[1][1].status = EStatus.ALIVE;
-            grid.Items.Refresh();
+            // Reload one generation every 1 second
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            timer.Start();
         }
 
         private void FastButton_Click(object sender, RoutedEventArgs e)
         {
-            // Reload one generation every 0.3 seconds
-            map.MapTimeRefresh(true, grid.Items.Refresh);
-            //grid.Items.Refresh();
+            // Reload one generation every 0.1 second
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Start();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("WIP : StopButton_Click");
             // Stop the Thread
+            timer.Stop();
         }
 
         private void RunGenerationButton_Click(object sender, RoutedEventArgs e)
