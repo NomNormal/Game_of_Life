@@ -128,9 +128,9 @@
                 x:Name="pathTextBox"
                 VerticalContentAlignment="Center"
                 Grid.Column="12"
-                Grid.ColumnSpan="7"
+                Grid.ColumnSpan="8"
                 Grid.Row="0"
-                Margin="5,10,5,5"
+                Margin="5,10,10,5"
                 Background="#f6c3ab"
                 BorderBrush="#e9692c"
                 BorderThickness="0.7"
@@ -221,9 +221,37 @@
                 BorderThickness="1"
                 Content="Run"
                 Cursor="Hand" Click="RunGenerationButton_Click" />
+            <Button
+                x:Name="resetButton"
+                Grid.Column="18"
+                Grid.ColumnSpan="2"
+                Grid.Row="1"
+                Margin="5,5,10,10"
+                Background="#fbe1d5"
+                BorderBrush="#e9692c"
+                BorderThickness="1"
+                Content="Reset grid"
+                Cursor="Hand" Click="resetButton_Click"  />
         </Grid>
 
         <Grid>
+            <TextBlock
+                Margin="200,170,200,200"
+                FontSize="15"
+                Foreground="Black"
+                Text="Template : " />
+            <TextBox
+                x:Name="gridTextBox"
+                Margin="200,200,200,200"
+                Background="#f6c3ab"
+                BorderBrush="#e9692c"
+                SelectionBrush="#e9692c"
+                BorderThickness="0.7"
+                TextWrapping="Wrap"
+                VerticalScrollBarVisibility="auto"
+                AcceptsReturn="True"
+                Text=""
+                Cursor="Hand" />
             <ItemsControl 
                 x:Name="grid" 
                 VerticalAlignment="Center"

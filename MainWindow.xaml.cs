@@ -43,6 +43,8 @@ namespace Game_of_Life
         {
             InitializeComponent();
             timer.Tick += new EventHandler(EventSpeed);
+            gridTextBox.Text = "5 10\n" + "0010000000\n" + "0001000000\n" + "0111000000\n" + "0000000000\n" + "0000000000";
+            
         }
 
         private void EventSpeed(Object myObject, EventArgs myEventArgs)
@@ -54,6 +56,36 @@ namespace Game_of_Life
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void MapInit()
+        {
+            List<string> inputGrid = new List<string>(File.ReadAllLines(pathTextBox.Text));
+            string header = inputGrid.First();
+            inputGrid.RemoveAt(0);
+
+            Regex regexSize = new Regex(@"([0-9]*) ([0-9]*)");
+            Match matches = regexSize.Match(header);
+            string numberRowStr = matches.Groups[1].Value;
+            string numberColumnStr = matches.Groups[2].Value;
+            int numberRow = Int32.Parse(numberRowStr);
+            int numberColumn = Int32.Parse(numberColumnStr);
+
+            this.map = new Map(new List<List<Cell>>());
+
+            for (int y = 0; y < numberRow; y++)
+            {
+                this.map.grid.Insert(y, new List<Cell>());
+                for (int x = 0; x < numberColumn; x++)
+                {
+                    bool isAlive = inputGrid[y][x] == '1';
+                    Cell cell = new Cell(isAlive);
+                    this.map.grid[y].Insert(x, cell);
+                }
+            }
+
+            grid.ItemsSource = this.map.grid;
+            grid.Items.Refresh();
         }
 
         private void browseButton_Click(object sender, RoutedEventArgs e)
@@ -68,70 +100,82 @@ namespace Game_of_Life
             if (openFileDialog.ShowDialog() == true)
             {
                 pathTextBox.Text = openFileDialog.FileName;
-                List<string> inputGrid = new List<string>(File.ReadAllLines(pathTextBox.Text));
-                string header = inputGrid.First();
-                inputGrid.RemoveAt(0);
+                MapInit();
+            }
+        }
 
-                Regex regEx = new Regex(@"([0-9]*) ([0-9]*)");
-                Match matches = regEx.Match(header);
-                string numberRowStr = matches.Groups[1].Value;
-                string numberColumnStr = matches.Groups[2].Value;
-                int numberRow = Int32.Parse(numberRowStr);
-                int numberColumn = Int32.Parse(numberColumnStr);
-
-                this.map = new Map(new List<List<Cell>>());
-
-                for (int y = 0; y < numberRow; y++)
+        private void CheckGrid(int number)
+        {
+            Regex regexCheckFile = new Regex(@"(.*)(.txt)\n");
+            Match matchCheckFile = regexCheckFile.Match(pathTextBox.Text);
+            if (File.Exists(pathTextBox.Text) == true && matchCheckFile != null)
+            {
+                switch (number)
                 {
-                    this.map.grid.Insert(y, new List<Cell>());
-                    for (int x = 0; x < numberColumn; x++)
-                    {
-                        bool isAlive = inputGrid[y][x] == '1';
-                        Cell cell = new Cell(isAlive);
-                        this.map.grid[y].Insert(x, cell);
-                    }
+                    case 1:
+                        map.MapNumberRefresh(1);
+                        grid.Items.Refresh();
+                        break;
+                    case 2:
+                        timer.Interval = TimeSpan.FromMilliseconds(1000);
+                        timer.Start();
+                        break;
+                    case 3:
+                        timer.Interval = TimeSpan.FromMilliseconds(100);
+                        timer.Start();
+                        break;
+                    case 4:
+                        timer.Stop();
+                        break;
+                    case 5:
+                        int generation = Int32.Parse(generationTextBox.Text);
+                        map.MapNumberRefresh(generation);
+                        grid.Items.Refresh();
+                        break;
+                    default:
+                        Console.WriteLine("Default case");
+                        break;
                 }
-                
-                grid.ItemsSource = this.map.grid;
-                grid.Items.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Wrong file");
             }
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation
-            map.MapNumberRefresh(1);
-            grid.Items.Refresh();
+            CheckGrid(1);
         }
 
         private void SlowButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 1 second
-            timer.Interval = TimeSpan.FromMilliseconds(1000);
-            timer.Start();
+            CheckGrid(2);
         }
 
         private void FastButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 0.1 second
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Start();
+            CheckGrid(3);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             // Stop the Thread
-            timer.Stop();
+            CheckGrid(4);
         }
 
         private void RunGenerationButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload multiple generation
-            int generation = Int32.Parse(generationTextBox.Text);
-            map.MapNumberRefresh(generation);
-            grid.Items.Refresh();
+            CheckGrid(5);
         }
 
-
+        private void resetButton_Click(object sender, RoutedEventArgs e)
+        {
+            MapInit();
+        }
     }
 }
