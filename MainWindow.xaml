@@ -62,7 +62,7 @@
 
 
             <TextBox 
-                x:Name="linesTextBox"
+                x:Name="rowsTextBox"
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"                
                 Grid.Column="0"
@@ -71,7 +71,7 @@
                 Background="#f6c3ab"
                 BorderBrush="#e9692c"
                 BorderThickness="0.7"
-                Text="5"
+                Text=""
                 Cursor="Hand" />
             <TextBlock
                 VerticalAlignment="Center"
@@ -91,7 +91,7 @@
                 Background="#f6c3ab"
                 BorderBrush="#e9692c"
                 BorderThickness="0.7"
-                Text="10"
+                Text=""
                 Cursor="Hand" />
             <TextBlock
                 VerticalAlignment="Center"
@@ -174,7 +174,7 @@
                 x:Name="stopButton"
                 Grid.Column="7"
                 Grid.Row="1"
-                Margin="10,5,10,10"
+                Margin="5,5,5,10"
                 Background="#fbe1d5"
                 BorderBrush="#e9692c"
                 BorderThickness="1"
@@ -236,6 +236,7 @@
 
         <Grid>
             <TextBlock
+                x:Name="templateTextBox"
                 Margin="200,170,200,200"
                 FontSize="15"
                 Foreground="Black"
@@ -244,7 +245,7 @@
                 x:Name="gridTextBox"
                 Margin="200,200,200,200"
                 Background="#f6c3ab"
-                BorderBrush="#e9692c"
+                BorderBrush="#f6c3ab"
                 SelectionBrush="#e9692c"
                 BorderThickness="0.7"
                 TextWrapping="Wrap"

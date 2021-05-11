@@ -53,11 +53,6 @@ namespace Game_of_Life
             grid.Items.Refresh();
         }
 
-        private void ResizeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void MapInit()
         {
             List<string> inputGrid = new List<string>(File.ReadAllLines(pathTextBox.Text));
@@ -68,6 +63,8 @@ namespace Game_of_Life
             Match matches = regexSize.Match(header);
             string numberRowStr = matches.Groups[1].Value;
             string numberColumnStr = matches.Groups[2].Value;
+            rowsTextBox.Text = numberRowStr;
+            columnsTextBox.Text = numberColumnStr;
             int numberRow = Int32.Parse(numberRowStr);
             int numberColumn = Int32.Parse(numberColumnStr);
 
@@ -88,6 +85,31 @@ namespace Game_of_Life
             grid.Items.Refresh();
         }
 
+        private void ResizeMap ()
+        {
+            int resizeRow = Int32.Parse(rowsTextBox.Text);
+            int resizeColumn = Int32.Parse(columnsTextBox.Text);
+            int originalX = map.grid[0].Count();
+            int originalY = map.grid.Count();
+
+            for (int y = 0; y < resizeRow; y++)
+            {
+                if (originalY - 1 < y)
+                {
+                    this.map.grid.Insert(y, new List<Cell>());
+                }
+
+                for (int x = 0; x < resizeColumn; x++)
+                {
+                    if (originalX - 1 < x || originalY - 1 < y)
+                    {
+                        Cell cell = new Cell(false);
+                        this.map.grid[y].Insert(x, cell);
+                    }
+                }
+            }
+        }
+
         private void browseButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -101,11 +123,16 @@ namespace Game_of_Life
             {
                 pathTextBox.Text = openFileDialog.FileName;
                 MapInit();
+                templateTextBox.Text = "";
+                gridTextBox.Visibility = Visibility.Hidden;
+                
             }
         }
 
         private void CheckGrid(int number)
         {
+            // Check if the file exists before running anything
+
             Regex regexCheckFile = new Regex(@"(.*)(.txt)\n");
             Match matchCheckFile = regexCheckFile.Match(pathTextBox.Text);
             if (File.Exists(pathTextBox.Text) == true && matchCheckFile != null)
@@ -132,14 +159,20 @@ namespace Game_of_Life
                         map.MapNumberRefresh(generation);
                         grid.Items.Refresh();
                         break;
+                    case 6:
+                        MapInit();
+                        break;
+                    case 7:
+                        ResizeMap();
+                        grid.Items.Refresh();
+                        break;
                     default:
-                        Console.WriteLine("Default case");
                         break;
                 }
             }
             else
             {
-                MessageBox.Show("Wrong file");
+                MessageBox.Show("Not a correct path or file.");
             }
         }
 
@@ -175,7 +208,14 @@ namespace Game_of_Life
 
         private void resetButton_Click(object sender, RoutedEventArgs e)
         {
-            MapInit();
+            // Reset the grid, based on the file
+            CheckGrid(6);
+        }
+
+        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Resize the inputed file
+            CheckGrid(7);
         }
     }
 }
