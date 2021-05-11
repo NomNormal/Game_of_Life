@@ -7,15 +7,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using Game_of_Life.enums;
 
-/*
-5 10
-0010000000
-0001000000
-0111000000
-0000000000
-0000000000
- */
 
 namespace Game_of_Life
 {
@@ -125,7 +118,7 @@ namespace Game_of_Life
             }
         }
 
-        private void CheckGrid(int number)
+        private void RunInteraction(EGUIInteraction interaction)
         {
             // Check if the file exists before running anything
 
@@ -133,34 +126,34 @@ namespace Game_of_Life
             Match matchCheckFile = regexCheckFile.Match(pathTextBox.Text);
             if (File.Exists(pathTextBox.Text) == true && matchCheckFile != null)
             {
-                switch (number)
+                switch (interaction)
                 {
-                    case 1:
+                    case EGUIInteraction.GENERATE:
                         map.MapNumberRefresh(1);
                         grid.Items.Refresh();
                         countAliveTextBox.Text = map.countAliveCells.ToString();
                         break;
-                    case 2:
+                    case EGUIInteraction.SLOW:
                         timer.Interval = TimeSpan.FromMilliseconds(1000);
                         timer.Start();
                         break;
-                    case 3:
+                    case EGUIInteraction.FAST:
                         timer.Interval = TimeSpan.FromMilliseconds(100);
                         timer.Start();
                         break;
-                    case 4:
+                    case EGUIInteraction.PAUSE:
                         timer.Stop();
                         break;
-                    case 5:
+                    case EGUIInteraction.MULTIPLE_GENERATE:
                         int generation = Int32.Parse(generationTextBox.Text);
                         map.MapNumberRefresh(generation);
                         grid.Items.Refresh();
                         countAliveTextBox.Text = map.countAliveCells.ToString();
                         break;
-                    case 6:
+                    case EGUIInteraction.RESET:
                         MapInit();
                         break;
-                    case 7:
+                    case EGUIInteraction.RESIZE:
                         ResizeMap();
                         grid.Items.Refresh();
                         countAliveTextBox.Text = map.countAliveCells.ToString();
@@ -178,43 +171,43 @@ namespace Game_of_Life
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation
-            CheckGrid(1);
+            RunInteraction(EGUIInteraction.GENERATE);
         }
 
         private void SlowButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 1 second
-            CheckGrid(2);
+            RunInteraction(EGUIInteraction.SLOW);
         }
 
         private void FastButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 0.1 second
-            CheckGrid(3);
+            RunInteraction(EGUIInteraction.FAST);
         }
 
-        private void StopButton_Click(object sender, RoutedEventArgs e)
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
-            // Stop the Thread
-            CheckGrid(4);
+            // Pause the execution
+            RunInteraction(EGUIInteraction.PAUSE);
         }
 
         private void RunGenerationButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload multiple generation
-            CheckGrid(5);
+            RunInteraction(EGUIInteraction.MULTIPLE_GENERATE);
         }
 
         private void resetButton_Click(object sender, RoutedEventArgs e)
         {
             // Reset the grid, based on the file
-            CheckGrid(6);
+            RunInteraction(EGUIInteraction.RESET);
         }
 
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
             // Resize the inputed file
-            CheckGrid(7);
+            RunInteraction(EGUIInteraction.RESIZE);
         }
     }
 }

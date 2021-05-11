@@ -171,15 +171,15 @@
                 Content="Play fast"
                 Cursor="Hand" Click="FastButton_Click" />
             <Button
-                x:Name="stopButton"
+                x:Name="pauseButton"
                 Grid.Column="7"
                 Grid.Row="1"
                 Margin="5,5,5,10"
                 Background="#fbe1d5"
                 BorderBrush="#e9692c"
                 BorderThickness="1"
-                Content="Stop"
-                Cursor="Hand" Click="StopButton_Click" />
+                Content="Pause"
+                Cursor="Hand" Click="PauseButton_Click" />
             <TextBlock
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
