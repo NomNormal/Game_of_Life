@@ -1,22 +1,10 @@
 ﻿using Game_of_Life.model;
-using Game_of_Life.enums;
 using System;
 using System.Collections.Generic;
-using System.IO; // For FileStream
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
@@ -51,6 +39,7 @@ namespace Game_of_Life
         {
             map.OneGeneration();
             grid.Items.Refresh();
+            countAliveTextBox.Text = map.countAliveCells.ToString();
         }
 
         private void MapInit()
@@ -70,17 +59,24 @@ namespace Game_of_Life
 
             this.map = new Map(new List<List<Cell>>());
 
+            int countAlive = 0;
+
             for (int y = 0; y < numberRow; y++)
             {
                 this.map.grid.Insert(y, new List<Cell>());
                 for (int x = 0; x < numberColumn; x++)
                 {
                     bool isAlive = inputGrid[y][x] == '1';
+                    if (isAlive)
+                    {
+                        countAlive++;
+                    }
+                    
                     Cell cell = new Cell(isAlive);
                     this.map.grid[y].Insert(x, cell);
                 }
             }
-
+            countAliveTextBox.Text = countAlive.ToString();
             grid.ItemsSource = this.map.grid;
             grid.Items.Refresh();
         }
@@ -142,6 +138,7 @@ namespace Game_of_Life
                     case 1:
                         map.MapNumberRefresh(1);
                         grid.Items.Refresh();
+                        countAliveTextBox.Text = map.countAliveCells.ToString();
                         break;
                     case 2:
                         timer.Interval = TimeSpan.FromMilliseconds(1000);
@@ -158,6 +155,7 @@ namespace Game_of_Life
                         int generation = Int32.Parse(generationTextBox.Text);
                         map.MapNumberRefresh(generation);
                         grid.Items.Refresh();
+                        countAliveTextBox.Text = map.countAliveCells.ToString();
                         break;
                     case 6:
                         MapInit();
@@ -165,6 +163,7 @@ namespace Game_of_Life
                     case 7:
                         ResizeMap();
                         grid.Items.Refresh();
+                        countAliveTextBox.Text = map.countAliveCells.ToString();
                         break;
                     default:
                         break;

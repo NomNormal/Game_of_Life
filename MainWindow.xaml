@@ -240,7 +240,7 @@
                 Margin="200,170,200,200"
                 FontSize="15"
                 Foreground="Black"
-                Text="Template : " />
+                Text="This is the template. Copy it to a .txt file and open it using the browse button. " />
             <TextBox
                 x:Name="gridTextBox"
                 Margin="200,200,200,200"
@@ -258,6 +258,21 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 ItemTemplate="{DynamicResource DataTemplate_Level1}"/>
+            <TextBlock
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Left"
+                Margin="10,10,10,40"
+                FontSize="13"
+                Foreground="Black"
+                Text="Alive : " />
+            <TextBlock
+                x:Name="countAliveTextBox"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Left"
+                Margin="10,10,10,20"
+                FontSize="13"
+                Foreground="Black"
+                Text="" />
         </Grid>
     </Grid>
 </Window>

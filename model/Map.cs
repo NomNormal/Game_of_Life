@@ -1,12 +1,7 @@
 ﻿using Game_of_Life.enums;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Game_of_Life.model
 {
@@ -14,6 +9,7 @@ namespace Game_of_Life.model
     class Map
     {
         public List<List<Cell>> grid;
+        public int countAliveCells = 0;
 
         public Map(List<List<Cell>> grid)
         {
@@ -43,6 +39,7 @@ namespace Game_of_Life.model
 
 
             // Copy the original grid
+            countAliveCells = 0;
             List<List<Cell>> gridCopy = new List<List<Cell>>();
             for (int y = 0; y < grid.Count(); y++)
             {
@@ -62,10 +59,10 @@ namespace Game_of_Life.model
                     gridCopy[y].Insert(x, cell);
                 }
             }
-
-            List<Task> cellCheck = new();
-
             
+            List<Task> cellCheck = new();
+            
+
             // Reload cell status depending on the number of neightbours
             for (int y = 0; y < grid.Count(); y++)
             {
@@ -77,11 +74,14 @@ namespace Game_of_Life.model
                     {
                         int nbrNeighbours = GetAliveNeighboursCount(yy, xx);
                         gridCopy[yy][xx].CellStatusReload(nbrNeighbours);
+                        if (gridCopy[yy][xx].status == EStatus.ALIVE)
+                        {
+                            countAliveCells++;
+                        }
                     });
                     cellCheck.Add(taskCellCheck);
                 }
             }
-            
             Task.WaitAll(cellCheck.ToArray());
 
             grid.Clear();
@@ -89,7 +89,7 @@ namespace Game_of_Life.model
 
         }
 
-        public int GetAliveNeighboursCount(int y, int x)
+        private int GetAliveNeighboursCount(int y, int x)
         {
             // Count the neighbours on a cell           
 
