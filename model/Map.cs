@@ -14,26 +14,18 @@ namespace Game_of_Life.model
         public Map(List<List<Cell>> grid)
         {
             this.grid = grid;
-
-            //Thread thread = new Thread(new ThreadStart(MapNumberRefresh));
         }
 
-        public void MapNumberRefresh(int numberGeneration)
+        public async Task MapNumberRefresh(int numberGeneration)
         {
             // Reload the generation one or multiple time
             for (int i = 0; i < numberGeneration; i++)
             {
-                Task taskGeneration = Task.Run(() =>
-                {
-                    OneGeneration();
-                }
-                );
-                Task.WaitAll(taskGeneration);
+                await OneGeneration();
             }
-
         }
 
-        public void OneGeneration()
+        public async Task OneGeneration()
         {
             // Refresh all the map only one time
 
@@ -59,9 +51,9 @@ namespace Game_of_Life.model
                     gridCopy[y].Insert(x, cell);
                 }
             }
-            
+
             List<Task> cellCheck = new();
-            
+
 
             // Reload cell status depending on the number of neightbours
             for (int y = 0; y < grid.Count(); y++)
@@ -82,7 +74,7 @@ namespace Game_of_Life.model
                     cellCheck.Add(taskCellCheck);
                 }
             }
-            Task.WaitAll(cellCheck.ToArray());
+            await Task.WhenAll(cellCheck.ToArray());
 
             grid.Clear();
             grid.AddRange(gridCopy);

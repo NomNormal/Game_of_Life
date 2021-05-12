@@ -123,7 +123,7 @@
                 BorderBrush="#e9692c"
                 BorderThickness="1"
                 Content="Browse.."
-                Cursor="Hand" Click="browseButton_Click"  />
+                Cursor="Hand" Click="BrowseButton_Click"  />
             <TextBox
                 x:Name="pathTextBox"
                 VerticalContentAlignment="Center"
@@ -231,7 +231,7 @@
                 BorderBrush="#e9692c"
                 BorderThickness="1"
                 Content="Reset grid"
-                Cursor="Hand" Click="resetButton_Click"  />
+                Cursor="Hand" Click="ResetButton_Click"  />
         </Grid>
 
         <Grid>

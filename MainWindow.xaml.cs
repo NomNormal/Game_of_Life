@@ -7,13 +7,12 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Win32;
-using Game_of_Life.enums;
 
 
 namespace Game_of_Life
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Hello :)
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -25,12 +24,11 @@ namespace Game_of_Life
             InitializeComponent();
             timer.Tick += new EventHandler(EventSpeed);
             gridTextBox.Text = "5 10\n" + "0010000000\n" + "0001000000\n" + "0111000000\n" + "0000000000\n" + "0000000000";
-            
         }
 
-        private void EventSpeed(Object myObject, EventArgs myEventArgs)
+        private async void EventSpeed(Object myObject, EventArgs myEventArgs)
         {
-            map.OneGeneration();
+            await map.OneGeneration();
             grid.Items.Refresh();
             countAliveTextBox.Text = map.countAliveCells.ToString();
         }
@@ -64,7 +62,7 @@ namespace Game_of_Life
                     {
                         countAlive++;
                     }
-                    
+
                     Cell cell = new Cell(isAlive);
                     this.map.grid[y].Insert(x, cell);
                 }
@@ -74,7 +72,7 @@ namespace Game_of_Life
             grid.Items.Refresh();
         }
 
-        private void ResizeMap ()
+        private void ResizeMap()
         {
             int resizeRow = Int32.Parse(rowsTextBox.Text);
             int resizeColumn = Int32.Parse(columnsTextBox.Text);
@@ -99,7 +97,7 @@ namespace Game_of_Life
             }
         }
 
-        private void browseButton_Click(object sender, RoutedEventArgs e)
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
@@ -114,100 +112,121 @@ namespace Game_of_Life
                 MapInit();
                 templateTextBox.Text = "";
                 gridTextBox.Visibility = Visibility.Hidden;
-                
+
             }
         }
 
-        private void RunInteraction(EGUIInteraction interaction)
+        private bool FilePathExists()
         {
             // Check if the file exists before running anything
-
             Regex regexCheckFile = new Regex(@"(.*)(.txt)\n");
             Match matchCheckFile = regexCheckFile.Match(pathTextBox.Text);
-            if (File.Exists(pathTextBox.Text) == true && matchCheckFile != null)
+            return File.Exists(pathTextBox.Text) == true && matchCheckFile != null;
+        }
+
+        private void DisplayNonExistingFilePathError()
+        {
+            MessageBox.Show("Not a correct path or file.");
+        }
+
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Reload one generation
+            if (FilePathExists())
             {
-                switch (interaction)
-                {
-                    case EGUIInteraction.GENERATE:
-                        map.MapNumberRefresh(1);
-                        grid.Items.Refresh();
-                        countAliveTextBox.Text = map.countAliveCells.ToString();
-                        break;
-                    case EGUIInteraction.SLOW:
-                        timer.Interval = TimeSpan.FromMilliseconds(1000);
-                        timer.Start();
-                        break;
-                    case EGUIInteraction.FAST:
-                        timer.Interval = TimeSpan.FromMilliseconds(100);
-                        timer.Start();
-                        break;
-                    case EGUIInteraction.PAUSE:
-                        timer.Stop();
-                        break;
-                    case EGUIInteraction.MULTIPLE_GENERATE:
-                        int generation = Int32.Parse(generationTextBox.Text);
-                        map.MapNumberRefresh(generation);
-                        grid.Items.Refresh();
-                        countAliveTextBox.Text = map.countAliveCells.ToString();
-                        break;
-                    case EGUIInteraction.RESET:
-                        MapInit();
-                        break;
-                    case EGUIInteraction.RESIZE:
-                        ResizeMap();
-                        grid.Items.Refresh();
-                        countAliveTextBox.Text = map.countAliveCells.ToString();
-                        break;
-                    default:
-                        break;
-                }
+                await map.MapNumberRefresh(1);
+                grid.Items.Refresh();
+                countAliveTextBox.Text = map.countAliveCells.ToString();
             }
             else
             {
-                MessageBox.Show("Not a correct path or file.");
+                DisplayNonExistingFilePathError();
             }
-        }
-
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Reload one generation
-            RunInteraction(EGUIInteraction.GENERATE);
         }
 
         private void SlowButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 1 second
-            RunInteraction(EGUIInteraction.SLOW);
+            if (FilePathExists())
+            {
+                timer.Interval = TimeSpan.FromMilliseconds(1000);
+                timer.Start();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
 
         private void FastButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload one generation every 0.1 second
-            RunInteraction(EGUIInteraction.FAST);
+            if (FilePathExists())
+            {
+                timer.Interval = TimeSpan.FromMilliseconds(100);
+                timer.Start();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
             // Pause the execution
-            RunInteraction(EGUIInteraction.PAUSE);
+            if (FilePathExists())
+            {
+                timer.Stop();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
 
-        private void RunGenerationButton_Click(object sender, RoutedEventArgs e)
+        private async void RunGenerationButton_Click(object sender, RoutedEventArgs e)
         {
             // Reload multiple generation
-            RunInteraction(EGUIInteraction.MULTIPLE_GENERATE);
+            if (FilePathExists())
+            {
+                int generation = Int32.Parse(generationTextBox.Text);
+                await map.MapNumberRefresh(generation);
+                grid.Items.Refresh();
+                countAliveTextBox.Text = map.countAliveCells.ToString();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
 
-        private void resetButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             // Reset the grid, based on the file
-            RunInteraction(EGUIInteraction.RESET);
+            if (FilePathExists())
+            {
+                MapInit();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
 
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
             // Resize the inputed file
-            RunInteraction(EGUIInteraction.RESIZE);
+            if (FilePathExists())
+            {
+                ResizeMap();
+                grid.Items.Refresh();
+                countAliveTextBox.Text = map.countAliveCells.ToString();
+            }
+            else
+            {
+                DisplayNonExistingFilePathError();
+            }
         }
     }
 }
